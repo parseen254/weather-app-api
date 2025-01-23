@@ -10,14 +10,15 @@ class CityController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('query');
+        $perPage = $request->input('per_page', 10);
         
-        // Find matching cities by name or country
+        // Find matching cities by name or country with pagination
         $cities = City::where('name', 'LIKE', "%$query%")
             ->orWhere('country', 'LIKE', "%$query%")
-            ->get();
+            ->paginate($perPage);
 
-        // For each city, find 3 nearest neighbors
-        return $cities->map(function ($city) {
+        // Transform the paginated results
+        $cities->through(function ($city) {
             $neighbors = City::select('*')
                 ->selectRaw(
                     '(6371 * acos(cos(radians(?)) 
@@ -28,8 +29,14 @@ class CityController extends Controller
                     [$city->lat, $city->lon, $city->lat]
                 )
                 ->where('id', '!=', $city->id)
+                ->whereRaw('(6371 * acos(cos(radians(?)) 
+                     * cos(radians(lat)) 
+                     * cos(radians(lon) - radians(?)) 
+                     + sin(radians(?)) 
+                     * sin(radians(lat)))) >= 20', 
+                    [$city->lat, $city->lon, $city->lat])
                 ->orderBy('distance')
-                ->take(3)
+                ->take(4)
                 ->get();
 
             return [
@@ -37,5 +44,7 @@ class CityController extends Controller
                 'neighbors' => $neighbors
             ];
         });
+
+        return $cities;
     }
 }
