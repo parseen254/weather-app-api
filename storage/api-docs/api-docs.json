@@ -1,0 +1,171 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Weather API Documentation",
+        "description": "API documentation for the Weather Application",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/cities/search": {
+            "get": {
+                "tags": [
+                    "Cities"
+                ],
+                "summary": "Search cities",
+                "description": "Search cities by name or country and get nearby cities",
+                "operationId": "f229bbcd4910744c77993afa974e3680",
+                "parameters": [
+                    {
+                        "name": "query",
+                        "in": "query",
+                        "description": "Search term for city name or country",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Number of results per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of cities with their neighbors",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "city": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "name": {
+                                                                "type": "string"
+                                                            },
+                                                            "country": {
+                                                                "type": "string"
+                                                            },
+                                                            "lat": {
+                                                                "type": "number"
+                                                            },
+                                                            "lon": {
+                                                                "type": "number"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "neighbors": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "name": {
+                                                                    "type": "string"
+                                                                },
+                                                                "country": {
+                                                                    "type": "string"
+                                                                },
+                                                                "lat": {
+                                                                    "type": "number"
+                                                                },
+                                                                "lon": {
+                                                                    "type": "number"
+                                                                },
+                                                                "distance": {
+                                                                    "type": "number"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "current_page": {
+                                            "type": "integer"
+                                        },
+                                        "last_page": {
+                                            "type": "integer"
+                                        },
+                                        "per_page": {
+                                            "type": "integer"
+                                        },
+                                        "total": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/weather": {
+            "get": {
+                "tags": [
+                    "Weather"
+                ],
+                "summary": "Get weather information",
+                "operationId": "fa8cc72818e1e45b2ff1c61a16e1c876",
+                "parameters": [
+                    {
+                        "name": "lat",
+                        "in": "query",
+                        "description": "Latitude",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "lon",
+                        "in": "query",
+                        "description": "Longitude",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Weather data retrieved successfully"
+                    },
+                    "500": {
+                        "description": "Failed to fetch weather data"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Cities",
+            "description": "Cities"
+        },
+        {
+            "name": "Weather",
+            "description": "Weather"
+        }
+    ]
+}
