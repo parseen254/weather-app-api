@@ -34,6 +34,13 @@ class WeatherController extends Controller
      *         required=true,
      *         @OA\Schema(type="number")
      *     ),
+     *     @OA\Parameter(
+     *         name="units",
+     *         in="query",
+     *         description="Units of measurement",
+     *         required=false,
+     *         @OA\Schema(type="string", enum={"standard", "metric", "imperial"})
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Weather data retrieved successfully"
@@ -55,12 +62,13 @@ class WeatherController extends Controller
             'lon' => 'required|numeric',
         ]);
 
-        $cacheKey = "weather_{$request->lat}_{$request->lon}";
+        $cacheKey = "weather_{$request->lat}_{$request->lon}_{$request->units}";
         
         return Cache::remember($cacheKey, now()->addMinutes(15), function () use ($request) {
             $response = Http::get('https://api.openweathermap.org/data/3.0/onecall', [
                 'lat' => $request->lat,
                 'lon' => $request->lon,
+                'units' => $request->units ?? 'metric',
                 'exclude' => 'minutely,hourly',
                 'appid' => env('OPENWEATHER_API_KEY'),
             ]);

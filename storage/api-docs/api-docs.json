@@ -142,6 +142,20 @@
                         "schema": {
                             "type": "number"
                         }
+                    },
+                    {
+                        "name": "units",
+                        "in": "query",
+                        "description": "Units of measurement",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "standard",
+                                "metric",
+                                "imperial"
+                            ]
+                        }
                     }
                 ],
                 "responses": {
